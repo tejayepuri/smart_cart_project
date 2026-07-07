@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCart - Admin Registration{% endblock %}
+
+{% block content %}
+<div class="container fade-in">
+    <div class="auth-wrapper">
+        <div class="card auth-card">
+            <h2 class="card-title" style="border-color: var(--secondary);"><span style="color: var(--secondary);">Admin</span> Registration</h2>
+            
+            <form method="POST" action="/admin-signup">
+                <div class="form-group">
+                    <label for="name"><i class="fa-solid fa-user"></i> Full Name</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Admin Name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="admin.name@smartcart.com" required>
+                </div>
+                
+                <button type="submit" class="btn btn-secondary btn-block" style="margin-top: 10px;">
+                    <i class="fa-solid fa-paper-plane"></i> Send OTP to Email
+                </button>
+            </form>
+            
+            <div style="margin-top: 20px; text-align: center; font-size: 0.9rem;">
+                <p>Already registered? <a href="/admin-login" style="font-weight: 600; color: var(--secondary);">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCart - Product Catalog List{% endblock %}
+
+{% block content %}
+<div class="container fade-in">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
+        <h2><i class="fa-solid fa-boxes-stacked" style="color: var(--secondary); margin-right: 8px;"></i> Product Catalog</h2>
+        <a href="/admin/add-item" class="btn btn-secondary btn-sm">
+            <i class="fa-solid fa-plus"></i> Add New Product
+        </a>
+    </div>
+
+    <!-- Filters & Search Controls Bar -->
+    <div class="filters-bar">
+        <!-- Search Form -->
+        <form method="GET" action="/admin/item-list">
+            <input type="text" name="search" class="form-control search-input" placeholder="Search products..." 
+                   value="{{ request.args.get('search', '') }}">
+            {% if request.args.get('category') %}
+                <input type="hidden" name="category" value="{{ request.args.get('category') }}">
+            {% endif %}
+            <button type="submit" class="btn btn-secondary btn-sm">
+                <i class="fa-solid fa-magnifying-glass"></i> Search
+            </button>
+        </form>
+
+        <!-- Category Filter Form -->
+        <form method="GET" action="/admin/item-list">
+            {% if request.args.get('search') %}
+                <input type="hidden" name="search" value="{{ request.args.get('search') }}">
+            {% endif %}
+            <select name="category" class="form-control" style="width: auto; min-width: 180px;">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat.category }}"
+                    {% if request.args.get('category') == cat.category %} selected {% endif %}>
+                    {{ cat.category }}
+                </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-secondary btn-sm">
+                <i class="fa-solid fa-filter"></i> Filter
+            </button>
+        </form>
+    </div>
+
+    <!-- Product Catalog Data Table -->
+    {% if products|length == 0 %}
+        <div class="card" style="text-align: center; padding: 50px 20px;">
+            <i class="fa-solid fa-box-open" style="font-size: 3rem; color: var(--text-light); margin-bottom: 15px;"></i>
+            <h3>No Products In Catalog</h3>
+            <p style="color: var(--text-muted);">Try resetting your filters or publish new items to the store.</p>
+            <a href="/admin/item-list" class="btn btn-secondary btn-sm" style="margin-top: 20px;">Reset Filters</a>
+        </div>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">ID</th>
+                        <th style="width: 100px;">Image</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th style="width: 280px; text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td style="font-family: monospace; font-weight: 600; color: var(--text-muted);">#{{ product.product_id }}</td>
+                        <td>
+                            {% if product.image %}
+                                <img src="/static/uploads/product_images/{{ product.image }}" alt="{{ product.name }}" width="70" height="50">
+                            {% else %}
+                                <div style="font-size: 1.5rem; color: var(--text-light); text-align: center;"><i class="fa-solid fa-image"></i></div>
+                            {% endif %}
+                        </td>
+                        <td style="font-weight: 600; color: var(--dark-bg);">{{ product.name }}</td>
+                        <td><span style="background-color: var(--light-bg); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">{{ product.category }}</span></td>
+                        <td style="font-weight: 700; color: var(--primary);">₹{{ product.price }}</td>
+                        <td style="text-align: center;">
+                            <div style="display: inline-flex; gap: 8px;">
+                                <a href="/admin/view-item/{{ product.product_id }}" class="btn btn-light btn-sm" style="padding: 6px 12px;">
+                                    <i class="fa-solid fa-eye"></i> View
+                                </a>
+                                <a href="/admin/update-item/{{ product.product_id }}" class="btn btn-secondary btn-sm" style="padding: 6px 12px;">
+                                    <i class="fa-solid fa-pen-to-square"></i> Update
+                                </a>
+                                <a href="/admin/delete-item/{{ product.product_id }}" class="btn btn-danger btn-sm" style="padding: 6px 12px;"
+                                   onclick="return confirm('Are you sure you want to delete this product?')">
+                                    <i class="fa-solid fa-trash-can"></i> Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

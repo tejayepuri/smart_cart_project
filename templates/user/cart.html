@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCart - Your Cart{% endblock %}
+
+{% block content %}
+<div class="container fade-in">
+    <h2 style="margin-bottom: 25px;"><i class="fa-solid fa-cart-flatbed-suitcase" style="color: var(--primary); margin-right: 8px;"></i> Your Shopping Cart</h2>
+
+    {% if not cart %}
+        <div class="card" style="text-align: center; padding: 50px 20px;">
+            <i class="fa-solid fa-cart-shopping" style="font-size: 3.5rem; color: var(--text-light); margin-bottom: 20px;"></i>
+            <h3>Your cart is empty</h3>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">You have no items in your shopping cart. Start shopping to add items.</p>
+            <a href="/user/products" class="btn btn-primary"><i class="fa-solid fa-bag-shopping"></i> Shop Now</a>
+        </div>
+    {% else %}
+        <form action="/checkout" method="POST">
+            <div class="cart-flex">
+                <!-- Cart Items List Panel -->
+                <div class="cart-items-wrapper">
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px; text-align: center;">Select</th>
+                                    <th style="width: 100px;">Image</th>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pid, item in cart.items() %}
+                                <tr>
+                                    <td style="text-align: center;">
+                                        <input type="checkbox"
+                                               name="selected_products"
+                                               value="{{ pid }}"
+                                               class="product-checkbox"
+                                               data-price="{{ item.price }}"
+                                               data-quantity="{{ item.quantity }}"
+                                               style="width: 18px; height: 18px; cursor: pointer;"
+                                               checked>
+                                    </td>
+                                    <td>
+                                        {% if item.image %}
+                                            <img src="/static/uploads/product_images/{{ item.image }}" alt="{{ item.name }}" width="70" height="50">
+                                        {% else %}
+                                            <div style="font-size: 1.5rem; color: var(--text-light); text-align: center;"><i class="fa-solid fa-image"></i></div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 600; color: var(--dark-bg);">{{ item.name }}</div>
+                                    </td>
+                                    <td style="font-weight: 500;">₹{{ item.price }}</td>
+                                    <td>
+                                        <div class="qty-control">
+                                            <a href="/user/cart/decrease/{{ pid }}" class="qty-btn" style="text-decoration: none;">-</a>
+                                            <span class="qty-val">{{ item.quantity }}</span>
+                                            <a href="/user/cart/increase/{{ pid }}" class="qty-btn" style="text-decoration: none;">+</a>
+                                        </div>
+                                    </td>
+                                    <td style="font-weight: 700; color: var(--primary);">₹{{ item.price * item.quantity }}</td>
+                                    <td style="text-align: center;">
+                                        <a href="/user/cart/remove/{{ pid }}" class="btn btn-danger btn-sm" style="padding: 6px 12px;" onclick="return confirm('Remove this product?')">
+                                            <i class="fa-solid fa-trash-can"></i> Remove
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer;">
+                            <input type="checkbox" id="selectAll" style="width: 18px; height: 18px; cursor: pointer;" checked> Select All Items
+                        </label>
+                        <a href="/user/products" class="btn btn-light btn-sm"><i class="fa-solid fa-arrow-left"></i> Continue Shopping</a>
+                    </div>
+                </div>
+
+                <!-- Order Checkout Summary Panel -->
+                <div class="cart-summary-wrapper">
+                    <div class="card">
+                        <h3 class="card-title">Order Summary</h3>
+                        
+                        <div class="order-total-block" style="margin-top: 10px;">
+                            <span>Items Selected:</span>
+                            <span id="selectedCount" style="font-weight: 700;">0</span>
+                        </div>
+                        
+                        <div class="order-total-block grand-total">
+                            <span>Grand Total:</span>
+                            <span>₹<span id="grandTotal">0</span></span>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block" style="margin-top: 25px;">
+                            <i class="fa-solid fa-credit-card"></i> Proceed to Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <script>
+        function updateTotal() {
+            let total = 0;
+            let count = 0;
+            let checkboxes = document.querySelectorAll(".product-checkbox:checked");
+
+            checkboxes.forEach(cb => {
+                let price = parseFloat(cb.dataset.price);
+                let quantity = parseInt(cb.dataset.quantity);
+                total += price * quantity;
+                count += quantity;
+            });
+
+            document.getElementById("grandTotal").innerText = total.toLocaleString('en-IN');
+            document.getElementById("selectedCount").innerText = count;
+        }
+
+        // Individual checkbox change
+        document.querySelectorAll(".product-checkbox").forEach(cb => {
+            cb.addEventListener("change", function() {
+                // If any checkbox is unchecked, uncheck selectAll
+                if (!this.checked) {
+                    document.getElementById("selectAll").checked = false;
+                } else {
+                    // Check if all are checked
+                    let totalCheckboxes = document.querySelectorAll(".product-checkbox").length;
+                    let checkedCheckboxes = document.querySelectorAll(".product-checkbox:checked").length;
+                    if (totalCheckboxes === checkedCheckboxes) {
+                        document.getElementById("selectAll").checked = true;
+                    }
+                }
+                updateTotal();
+            });
+        });
+
+        // Select All checkbox
+        document.getElementById("selectAll").addEventListener("change", function() {
+            let checkboxes = document.querySelectorAll(".product-checkbox");
+
+            checkboxes.forEach(cb => {
+                cb.checked = this.checked;
+            });
+
+            updateTotal();
+        });
+
+        // Initialize total on load
+        window.addEventListener("DOMContentLoaded", () => {
+            updateTotal();
+        });
+        </script>
+    {% endif %}
+</div>
+{% endblock %}

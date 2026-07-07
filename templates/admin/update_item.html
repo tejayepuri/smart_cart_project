@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCart - Update Product{% endblock %}
+
+{% block content %}
+<div class="container fade-in" style="max-width: 800px;">
+    <div style="margin-bottom: 25px;">
+        <a href="/admin/item-list" style="font-weight: 500;"><i class="fa-solid fa-arrow-left"></i> Back to Product List</a>
+    </div>
+
+    <div class="card">
+        <h2 class="card-title" style="border-color: var(--secondary);"><i class="fa-solid fa-pen-to-square" style="color: var(--secondary); margin-right: 8px;"></i> Update Product</h2>
+        <p style="color: var(--text-muted); margin-bottom: 25px;">Edit the details or upload a new image for the product.</p>
+
+        <form method="POST" action="/admin/update-item/{{ product.product_id }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name"><i class="fa-solid fa-tag"></i> Product Name</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ product.name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description"><i class="fa-solid fa-align-left"></i> Description</label>
+                <textarea id="description" name="description" rows="4" class="form-control" required>{{ product.description }}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="category"><i class="fa-solid fa-folder-open"></i> Category</label>
+                    <input type="text" id="category" name="category" class="form-control" value="{{ product.category }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="price"><i class="fa-solid fa-indian-rupee-sign"></i> Price (INR)</label>
+                    <input type="number" step="0.01" id="price" name="price" class="form-control" value="{{ product.price }}" required>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label><i class="fa-solid fa-image"></i> Current Image</label><br>
+                <div style="background-color: var(--light-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 15px; width: fit-content;">
+                    <img src="/static/uploads/product_images/{{ product.image }}" alt="{{ product.name }}" width="120" style="border-radius: var(--radius-sm); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); object-fit: contain;">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label for="image"><i class="fa-solid fa-upload"></i> Upload New Image (Optional)</label>
+                <input type="file" id="image" name="image" class="form-control" accept="image/*">
+                <small style="color: var(--text-muted);">Leave empty to retain the current image.</small>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 35px;">
+                <a href="/admin/item-list" class="btn btn-light" style="flex: 1;">
+                    <i class="fa-solid fa-xmark"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-secondary" style="flex: 2;">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Product Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>SmartCart Invoice - #{{ order.order_id }}</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .invoice-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+        }
+        /* Header Info Layout using simple display blocks for HTML-to-PDF engine compatibility */
+        .invoice-header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .invoice-header-table td {
+            border: none;
+            padding: 0;
+            vertical-align: top;
+        }
+        .logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            color: #4f46e5;
+            margin: 0 0 5px 0;
+        }
+        .logo-text span {
+            color: #0ea5e9;
+        }
+        .invoice-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            text-transform: uppercase;
+            text-align: right;
+            margin: 0;
+        }
+        .meta-text {
+            color: #64748b;
+            font-size: 13px;
+        }
+        .info-section-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .info-section-table td {
+            border: none;
+            padding: 0;
+            width: 50%;
+            vertical-align: top;
+        }
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            width: 90%;
+        }
+        .address-box {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #1e293b;
+        }
+        /* Main Product Table */
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+        .product-table th {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            padding: 10px 12px;
+            border-bottom: 2px solid #cbd5e1;
+            text-align: left;
+        }
+        .product-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+        }
+        .product-table tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+        .text-right {
+            text-align: right !important;
+        }
+        .text-center {
+            text-align: center !important;
+        }
+        /* Summary Calculation Panel */
+        .summary-table {
+            width: 40%;
+            margin-left: 60%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+        .summary-table td {
+            padding: 8px 12px;
+            border: none;
+        }
+        .summary-table tr.total-row td {
+            border-top: 2px solid #cbd5e1;
+            font-size: 16px;
+            font-weight: 800;
+            color: #4f46e5;
+            padding-top: 12px;
+        }
+        .footer-note {
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="invoice-container">
+    <!-- Header Block -->
+    <table class="invoice-header-table">
+        <tr>
+            <td>
+                <h1 class="logo-text">Smart<span>Cart</span></h1>
+                <div class="meta-text">
+                    SmartCart Retail Private Limited<br>
+                    GSTIN: 27AAAAA1111A1Z1<br>
+                    support@smartcart.com | +1 (555) 019-2834
+                </div>
+            </td>
+            <td class="text-right">
+                <h2 class="invoice-title">Tax Invoice</h2>
+                <div class="meta-text" style="margin-top: 10px;">
+                    <strong>Invoice ID:</strong> SC-{{ order.order_id }}<br>
+                    <strong>Order Date:</strong> {{ order.created_at }}<br>
+                    <strong>Payment status:</strong> PAID
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Billing and Delivery Details -->
+    <table class="info-section-table">
+        <tr>
+            <!-- Billing Details -->
+            <td>
+                <div class="section-title">Seller Billing details</div>
+                <div class="address-box">
+                    <strong>SmartCart Distribution Hub</strong><br>
+                    Plot 120, Tech Park Industrial Area<br>
+                    Silicon Valley, CA, 94043<br>
+                    United States
+                </div>
+            </td>
+            <!-- Delivery Details -->
+            <td>
+                <div class="section-title">Shipped / Billed to</div>
+                <div class="address-box">
+                    {% if address %}
+                        <strong>{{ address.fullname }}</strong><br>
+                        {{ address.house }}, {{ address.address }}<br>
+                        {% if address.landmark %}Landmark: {{ address.landmark }}<br>{% endif %}
+                        {{ address.city }}, {{ address.state }} - {{ address.pincode }}<br>
+                        <strong>Phone:</strong> {{ address.mobile }}
+                    {% else %}
+                        <strong>Customer Account ID:</strong> #{{ order.user_id }}<br>
+                        <em>Address details not saved for this order.</em>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Item Listing -->
+    <table class="product-table">
+        <thead>
+            <tr>
+                <th style="width: 50px;" class="text-center">#</th>
+                <th>Item Description</th>
+                <th style="width: 100px;" class="text-right">Unit Price</th>
+                <th style="width: 60px;" class="text-center">Qty</th>
+                <th style="width: 120px;" class="text-right">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for it in items %}
+            <tr>
+                <td class="text-center">{{ loop.index }}</td>
+                <td><strong>{{ it.product_name }}</strong></td>
+                <td class="text-right">₹{{ "%.2f"|format(it.price) }}</td>
+                <td class="text-center">{{ it.quantity }}</td>
+                <td class="text-right" style="font-weight: 600;">₹{{ "%.2f"|format(it.price * it.quantity) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Calculations and Taxes Breakdown (GST 18% inclusive) -->
+    {% set amount_val = order.amount|float %}
+    {% set base_amount = amount_val / 1.18 %}
+    {% set total_gst = amount_val - base_amount %}
+    {% set cgst = total_gst / 2.0 %}
+    {% set sgst = total_gst / 2.0 %}
+    <table class="summary-table">
+        <tr>
+            <td>Base Amount:</td>
+            <td class="text-right">₹{{ "%.2f"|format(base_amount) }}</td>
+        </tr>
+        <tr>
+            <td>CGST (9%):</td>
+            <td class="text-right">₹{{ "%.2f"|format(cgst) }}</td>
+        </tr>
+        <tr>
+            <td>SGST (9%):</td>
+            <td class="text-right">₹{{ "%.2f"|format(sgst) }}</td>
+        </tr>
+        <tr class="total-row">
+            <td>Grand Total:</td>
+            <td class="text-right">₹{{ "%.2f"|format(amount_val) }}</td>
+        </tr>
+    </table>
+
+    <!-- Footer Terms -->
+    <div class="footer-note">
+        <p>This is a computer-generated tax invoice and does not require a physical signature.</p>
+        <p>Thank you for shopping with SmartCart!</p>
+    </div>
+</div>
+
+</body>
+</html>

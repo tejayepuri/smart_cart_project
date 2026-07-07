@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCart - Shop Smarter, Faster & Securely{% endblock %}
+
+{% block content %}
+<div class="container fade-in">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1 class="hero-title">Experience the Future of <span class="highlight">Shopping</span></h1>
+        <p class="hero-subtitle">SmartCart gives you the easiest way to browse top items, keep track of your shopping cart, and complete lightning-fast payments securely via Razorpay.</p>
+        
+        <div style="display: flex; justify-content: center; margin-top: 10px;">
+            <a href="/user-login" class="btn btn-primary"><i class="fa-solid fa-store"></i> Shop Now</a>
+        </div>
+    </section>
+
+    <!-- Floating Featured Products Showcase -->
+    <section class="featured-showcase">
+        <h2>🔥 Trending Showcase</h2>
+        <p style="color: var(--text-muted); margin-bottom: 20px;">Explore a curated selection of our most popular floating products.</p>
+        
+        <div class="floating-product-grid">
+            {% if products %}
+                {% for product in products %}
+                <div class="floating-product-card float-{{ loop.index }}">
+                    <div class="img-wrapper">
+                        {% if product.image %}
+                            <img src="/static/uploads/product_images/{{ product.image }}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&auto=format&fit=crop&q=80'" alt="{{ product.name }}">
+                        {% else %}
+                            <div style="font-size: 3rem; color: var(--text-light);"><i class="fa-solid fa-image"></i></div>
+                        {% endif %}
+                    </div>
+                    <h3>{{ product.name }}</h3>
+                    <div class="price">₹{{ product.price }}</div>
+                    <a href="/user-login" class="btn btn-primary btn-sm btn-block"><i class="fa-solid fa-cart-plus"></i> Buy Now</a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Fallback Mock Cards if database is empty -->
+                <div class="floating-product-card float-1">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&auto=format&fit=crop&q=80" alt="Noise Cancelling Headphones">
+                    </div>
+                    <h3>Noise-Cancelling Pro</h3>
+                    <div class="price">₹12,499</div>
+                    <a href="/user-login" class="btn btn-primary btn-sm btn-block"><i class="fa-solid fa-cart-plus"></i> Buy Now</a>
+                </div>
+
+                <div class="floating-product-card float-2">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=80" alt="Sport Sneaker">
+                    </div>
+                    <h3>Sport Sneakers</h3>
+                    <div class="price">₹5,999</div>
+                    <a href="/user-login" class="btn btn-primary btn-sm btn-block"><i class="fa-solid fa-cart-plus"></i> Buy Now</a>
+                </div>
+
+                <div class="floating-product-card float-3">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1496181130204-7552cc14f1d0?w=300&auto=format&fit=crop&q=80" alt="Pro Ultra Book">
+                    </div>
+                    <h3>ZenBook Pro Ultra</h3>
+                    <div class="price">₹89,999</div>
+                    <a href="/user-login" class="btn btn-primary btn-sm btn-block"><i class="fa-solid fa-cart-plus"></i> Buy Now</a>
+                </div>
+
+                <div class="floating-product-card float-4">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=80" alt="Minimalist Watch">
+                    </div>
+                    <h3>Minimalist Chrono</h3>
+                    <div class="price">₹8,499</div>
+                    <a href="/user-login" class="btn btn-primary btn-sm btn-block"><i class="fa-solid fa-cart-plus"></i> Buy Now</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Value Propositions / Features -->
+    <section>
+        <h2 style="text-align: center; margin-bottom: 40px;">Why Choose SmartCart?</h2>
+        
+        <div class="features-grid">
+            <div class="feature-box">
+                <div class="feature-icon"><i class="fa-solid fa-bolt"></i></div>
+                <h3>Quick Orders</h3>
+                <p>Add items to your cart, specify your delivery address, and proceed directly to payment checkout with one click.</p>
+            </div>
+            
+            <div class="feature-box">
+                <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <h3>Secure Payment</h3>
+                <p>Integrated natively with Razorpay for secure credit/debit card, UPI, netbanking, and wallet transactions.</p>
+            </div>
+            
+            <div class="feature-box">
+                <div class="feature-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                <h3>Auto Invoicing</h3>
+                <p>Download professional PDF invoices immediately from your order history panel for tax or tracking needs.</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

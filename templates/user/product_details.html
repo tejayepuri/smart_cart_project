@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCart - {{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container fade-in">
+    <div style="margin-bottom: 25px;">
+        <a href="/user/products" style="font-weight: 500;"><i class="fa-solid fa-arrow-left"></i> Back to Products</a>
+    </div>
+
+    <div class="card">
+        <div class="product-detail-flex">
+            <!-- Product Gallery Image -->
+            <div class="product-detail-gallery">
+                {% if product.image %}
+                    <img src="/static/uploads/product_images/{{ product.image }}" alt="{{ product.name }}">
+                {% else %}
+                    <div style="font-size: 5rem; color: var(--text-light);"><i class="fa-solid fa-image"></i></div>
+                {% endif %}
+            </div>
+
+            <!-- Product Specs Content -->
+            <div class="product-detail-content">
+                <span class="detail-label">{{ product.category }}</span>
+                <h1 style="margin: 10px 0 20px; font-size: 2.2rem;">{{ product.name }}</h1>
+                
+                <div class="detail-price">₹{{ product.price }}</div>
+                
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 20px;">
+                
+                <h4 style="margin-bottom: 10px;">Description</h4>
+                <p class="detail-desc">{{ product.description }}</p>
+                
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <a href="/user/add-to-cart/{{ product.product_id }}" class="btn btn-primary add-to-cart-ajax">
+                        <i class="fa-solid fa-cart-plus"></i> Add to Shopping Cart
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.add-to-cart-ajax').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const url = this.getAttribute('href');
+        
+        // Show loading spinner
+        const originalContent = this.innerHTML;
+        this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
+        this.style.pointerEvents = 'none'; // prevent double clicks
+        
+        fetch(url + '?ajax=1', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw new Error(err.message || 'Error') });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                // Update badge in navbar
+                let badge = document.querySelector('.cart-badge');
+                if (badge) {
+                    badge.innerText = data.cart_count;
+                } else {
+                    const cartLink = document.querySelector('.cart-nav-link');
+                    if (cartLink) {
+                        const newBadge = document.createElement('span');
+                        newBadge.className = 'cart-badge';
+                        newBadge.innerText = data.cart_count;
+                        cartLink.appendChild(newBadge);
+                    }
+                }
+                
+                // Show success feedback
+                this.innerHTML = '<i class="fa-solid fa-check"></i> Added to Cart!';
+                this.style.background = 'linear-gradient(135deg, var(--success) 0%, #059669 100%)';
+                this.style.borderColor = 'var(--success)';
+                
+                setTimeout(() => {
+                    this.innerHTML = originalContent;
+                    this.style.background = '';
+                    this.style.borderColor = '';
+                    this.style.pointerEvents = 'auto';
+                }, 1500);
+            } else {
+                alert(data.message || 'Error adding product.');
+                this.innerHTML = originalContent;
+                this.style.pointerEvents = 'auto';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            if (error.message.includes('login') || error.message.includes('first') || error.message.includes('401')) {
+                window.location.href = '/user-login';
+            } else {
+                alert('Something went wrong. Please try again.');
+                this.innerHTML = originalContent;
+                this.style.pointerEvents = 'auto';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

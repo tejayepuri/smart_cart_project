@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCart - Payment Success{% endblock %}
+
+{% block content %}
+<div class="container fade-in">
+    <div class="success-screen card" style="padding: 40px;">
+        <div class="success-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h2>Payment Successful!</h2>
+        <p style="color: var(--text-muted); margin-bottom: 25px;">Your transaction was completed successfully. Details of your payment are listed below.</p>
+
+        <div style="background-color: var(--light-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; text-align: left; margin-bottom: 30px; font-size: 0.95rem;">
+            <p style="margin-bottom: 8px;"><strong>Payment ID:</strong> <span style="font-family: monospace;">{{ payment_id }}</span></p>
+            <p><strong>Order ID:</strong> <span style="font-family: monospace;">{{ order_id }}</span></p>
+        </div>
+
+        {% if checkout_items %}
+            <h3 style="text-align: left; margin-bottom: 15px;">Purchased Items</h3>
+            <div class="table-responsive" style="margin-bottom: 25px;">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th style="text-align: center;">Qty</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pid, item in checkout_items.items() %}
+                        <tr>
+                            <td style="font-weight: 600;">{{ item.name }}</td>
+                            <td>₹{{ item.price }}</td>
+                            <td style="text-align: center;">{{ item.quantity }}</td>
+                            <td style="font-weight: 700; color: var(--primary);">₹{{ item.price * item.quantity }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div style="text-align: right; margin-bottom: 30px;">
+                <p style="font-size: 1.25rem;"><strong>Total Paid: ₹{{ total_amount }}</strong></p>
+            </div>
+        {% endif %}
+
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <a href="/user/products" class="btn btn-primary">
+                <i class="fa-solid fa-bag-shopping"></i> Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

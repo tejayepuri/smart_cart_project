@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCart - User Login{% endblock %}
+
+{% block content %}
+<div class="container fade-in">
+    <div class="auth-wrapper">
+        <div class="card auth-card">
+            <h2 class="card-title">User Login</h2>
+            
+            <form method="POST" action="/user-login">
+                <div class="form-group">
+                    <label for="email"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="yourname@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password"><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 10px;">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </button>
+            </form>
+            
+            <div style="margin-top: 20px; text-align: center; font-size: 0.9rem;">
+                <p>New to SmartCart? <a href="/user-register" style="font-weight: 600;">Create Account</a></p>
+                <p style="margin-top: 5px; font-size: 0.8rem; color: var(--text-muted);">
+                    Are you an administrator? <a href="/admin-login" style="color: var(--secondary);">Admin Portal</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

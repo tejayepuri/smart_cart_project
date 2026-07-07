@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SmartCart - Shop Smarter{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome 6 icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header class="navbar-header">
+        <nav class="navbar container">
+            <div class="nav-brand">
+                <a href="/">
+                    <i class="fa-solid fa-cart-shopping nav-logo-icon"></i>
+                    <span class="brand-text">Smart<span class="highlight">Cart</span></span>
+                </a>
+            </div>
+            
+            <div class="nav-toggle" id="navToggle">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+            
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+                
+                <!-- Dynamic Navigation Links -->
+                {% if session.get('user_id') %}
+                    <li><a href="/user/products" class="nav-link"><i class="fa-solid fa-bag-shopping"></i> Shop</a></li>
+                    <li>
+                        <a href="/user/cart" class="nav-link cart-nav-link">
+                            <i class="fa-solid fa-cart-flatbed-suitcase"></i> Cart
+                            {% if session.get('cart') %}
+                                <span class="cart-badge">{{ session.get('cart')|length }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li><a href="/user/my-orders" class="nav-link"><i class="fa-solid fa-clipboard-list"></i> Orders</a></li>
+                    <li class="user-greeting">
+                        <span><i class="fa-solid fa-user"></i> Hi, {{ session.get('user_name') }}</span>
+                    </li>
+                    <li><a href="/user-logout" class="nav-link btn-nav btn-outline"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+                
+                {% elif session.get('admin_id') %}
+                    <li><a href="/admin-dashboard" class="nav-link"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
+                    <li><a href="/admin/item-list" class="nav-link"><i class="fa-solid fa-boxes-stacked"></i> Products</a></li>
+                    <li><a href="/admin/add-item" class="nav-link"><i class="fa-solid fa-plus"></i> Add Item</a></li>
+                    <li><a href="/admin/profile" class="nav-link"><i class="fa-solid fa-user-gear"></i> Profile</a></li>
+                    <li class="admin-greeting">
+                        <span><i class="fa-solid fa-user-tie"></i> Admin</span>
+                    </li>
+                    <li><a href="/admin-logout" class="nav-link btn-nav btn-outline"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+                
+                {% else %}
+                    <!-- Guest Links -->
+                    <li class="dropdown-parent">
+                        <a href="#" class="nav-link"><i class="fa-solid fa-right-to-bracket"></i> Login <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/user-login"><i class="fa-solid fa-user"></i> User Login</a></li>
+                            <li><a href="/admin-login"><i class="fa-solid fa-user-tie"></i> Admin Login</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown-parent">
+                        <a href="#" class="nav-link btn-nav"><i class="fa-solid fa-user-plus"></i> Sign Up <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem; color: white;"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/user-register"><i class="fa-solid fa-user"></i> User Register</a></li>
+                            <li><a href="/admin-signup"><i class="fa-solid fa-user-tie"></i> Admin Signup</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Styled Alerts Container -->
+        <div class="container flash-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} fade-in">
+                            <span class="alert-icon">
+                                {% if category == 'success' %}
+                                    <i class="fa-solid fa-circle-check"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-circle-xmark"></i>
+                                {% endif %}
+                            </span>
+                            <span class="alert-message">{{ message }}</span>
+                            <button class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Block Content -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="footer-layout">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="/">
+                    <i class="fa-solid fa-cart-shopping footer-logo-icon"></i>
+                    <span>Smart<span class="highlight">Cart</span></span>
+                </a>
+                <p>Your one-stop smart destination for quality shopping. Premium goods, swift payments, and delightful experiences.</p>
+            </div>
+            <div class="footer-links-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/user/products">Browse Products</a></li>
+                    <li><a href="/user-login">User Portal</a></li>
+                    <li><a href="/admin-login">Admin Portal</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <p><i class="fa-solid fa-envelope"></i> support@smartcart.com</p>
+                <p><i class="fa-solid fa-phone"></i> +1 (555) 019-2834</p>
+                <p><i class="fa-solid fa-location-dot"></i> Tech Park, Silicon Valley, CA</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container footer-bottom-flex">
+                <p>&copy; 2026 SmartCart. All rights reserved.</p>
+                <div class="footer-socials">
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toggle menu JS -->
+    <script>
+        document.getElementById('navToggle').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

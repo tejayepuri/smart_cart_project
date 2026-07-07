@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCart - Order Confirmed!{% endblock %}
+
+{% block content %}
+<div class="container fade-in" style="max-width: 800px;">
+    <div class="card success-screen" style="padding: 40px; margin-top: 20px;">
+        <div class="success-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h2>🎉 Your Order is Confirmed!</h2>
+        <p style="color: var(--text-muted); margin-bottom: 30px;">Thank you for shopping with <strong>SmartCart</strong>. Your order has been registered and is being processed.</p>
+
+        <!-- Order Information Table -->
+        <h3 style="text-align: left; margin-bottom: 15px;">Order Details</h3>
+        <div style="background-color: var(--light-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 25px; text-align: left; margin-bottom: 35px; line-height: 1.8;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 8px;">
+                <strong>Order ID:</strong>
+                <span style="font-family: monospace;">#{{ order.order_id }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 8px;">
+                <strong>Payment ID:</strong>
+                <span style="font-family: monospace;">{{ order.razorpay_payment_id }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 8px;">
+                <strong>Order Date:</strong>
+                <span>{{ order.created_at }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding-top: 8px; font-size: 1.2rem; font-weight: 700; color: var(--primary);">
+                <span>Amount Paid:</span>
+                <span>₹{{ order.amount }}</span>
+            </div>
+        </div>
+
+        {% if address %}
+        <!-- Shipping Details -->
+        <h3 style="text-align: left; margin-bottom: 15px;">Shipping Address</h3>
+        <div style="background-color: var(--light-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 25px; text-align: left; margin-bottom: 35px; line-height: 1.6; font-size: 0.95rem;">
+            <p><strong>Recipient Name:</strong> {{ address.fullname }}</p>
+            <p><strong>Email Address:</strong> {{ address.email }}</p>
+            <p><strong>Mobile Number:</strong> {{ address.mobile }}{% if address.alternate_mobile %}, {{ address.alternate_mobile }}{% endif %}</p>
+            <p><strong>Address:</strong> {{ address.house }}, {{ address.address }}</p>
+            {% if address.landmark %}<p><strong>Landmark:</strong> {{ address.landmark }}</p>{% endif %}
+            <p><strong>City/State:</strong> {{ address.city }}, {{ address.state }} - {{ address.pincode }}</p>
+            <p><strong>Address Type:</strong> <span style="background-color: var(--primary-light); color: var(--primary); padding: 2px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">{{ address.address_type }}</span></p>
+        </div>
+        {% endif %}
+
+        <!-- Order Summary -->
+        <h3 style="text-align: left; margin-bottom: 15px;">Items Ordered</h3>
+        <div class="table-responsive" style="margin-bottom: 35px;">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th style="text-align: center;">Qty</th>
+                        <th>Price</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for it in items %}
+                    <tr>
+                        <td style="font-weight: 600;">{{ it.product_name }}</td>
+                        <td style="text-align: center;">{{ it.quantity }}</td>
+                        <td>₹{{ it.price }}</td>
+                        <td style="font-weight: 700; color: var(--primary);">₹{{ it.price * it.quantity }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Buttons Panel -->
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
+            <a href="/user/products" class="btn btn-primary">
+                <i class="fa-solid fa-bag-shopping"></i> Continue Shopping
+            </a>
+            <a href="/user/my-orders" class="btn btn-secondary">
+                <i class="fa-solid fa-clipboard-list"></i> View My Orders
+            </a>
+            <a href="/user/download-invoice/{{ order.order_id }}" class="btn btn-light">
+                <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> Download Invoice (PDF)
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

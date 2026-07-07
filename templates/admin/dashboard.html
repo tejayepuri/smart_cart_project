@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCart - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container fade-in">
+    <div style="margin-bottom: 30px;">
+        <h2><i class="fa-solid fa-chart-line" style="color: var(--secondary); margin-right: 8px;"></i> Admin Dashboard</h2>
+        <p style="color: var(--text-muted);">Welcome, <strong>{{ admin_name }}</strong>. Use this control panel to manage products, catalog items, and view system statistics.</p>
+    </div>
+
+    <!-- Quick Shortcuts Grid -->
+    <div class="features-grid" style="margin-top: 20px; margin-bottom: 40px;">
+        <div class="card feature-box" style="display: flex; flex-direction: column; text-align: center;">
+            <div class="feature-icon" style="color: var(--secondary);"><i class="fa-solid fa-square-plus"></i></div>
+            <h3>Add New Product</h3>
+            <p style="color: var(--text-muted); margin-bottom: 20px; flex: 1;">Create and publish new items into the storefront catalog with custom pricing and images.</p>
+            <a href="/admin/add-item" class="btn btn-secondary btn-sm"><i class="fa-solid fa-plus"></i> Add Item</a>
+        </div>
+        
+        <div class="card feature-box" style="display: flex; flex-direction: column; text-align: center;">
+            <div class="feature-icon" style="color: var(--secondary);"><i class="fa-solid fa-boxes-stacked"></i></div>
+            <h3>Inventory Catalog</h3>
+            <p style="color: var(--text-muted); margin-bottom: 20px; flex: 1;">View, update product descriptions, adjust pricing, delete outdated stock, and search categories.</p>
+            <a href="/admin/item-list" class="btn btn-secondary btn-sm"><i class="fa-solid fa-list-check"></i> Manage Items</a>
+        </div>
+
+        <div class="card feature-box" style="display: flex; flex-direction: column; text-align: center;">
+            <div class="feature-icon" style="color: var(--secondary);"><i class="fa-solid fa-user-gear"></i></div>
+            <h3>Profile Settings</h3>
+            <p style="color: var(--text-muted); margin-bottom: 20px; flex: 1;">Edit admin account name, update email coordinates, configure security passwords, and change avatar.</p>
+            <a href="/admin/profile" class="btn btn-secondary btn-sm"><i class="fa-solid fa-user-edit"></i> Edit Profile</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

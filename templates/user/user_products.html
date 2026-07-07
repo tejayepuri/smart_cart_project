@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCart - Browse Products{% endblock %}
+
+{% block content %}
+<div class="container fade-in">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; flex-wrap: wrap; gap: 15px;">
+        <h2><i class="fa-solid fa-store" style="color: var(--primary); margin-right: 8px;"></i> All Products</h2>
+        <a href="/user/cart" class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-cart-flatbed-suitcase"></i> View Cart
+        </a>
+    </div>
+
+    <!-- Filters & Search Controls Bar -->
+    <div class="filters-bar">
+        <!-- Search Form -->
+        <form method="GET" action="/user/products">
+            <input type="text" name="search" class="form-control search-input" placeholder="Search product..." 
+                   value="{{ request.args.get('search', '') }}">
+            {% if request.args.get('category') %}
+                <input type="hidden" name="category" value="{{ request.args.get('category') }}">
+            {% endif %}
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-magnifying-glass"></i> Search
+            </button>
+        </form>
+
+        <!-- Category Filter Form -->
+        <form method="GET" action="/user/products">
+            {% if request.args.get('search') %}
+                <input type="hidden" name="search" value="{{ request.args.get('search') }}">
+            {% endif %}
+            <select name="category" class="form-control" style="width: auto; min-width: 180px;">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat.category }}"
+                    {% if request.args.get('category') == cat.category %} selected {% endif %}>
+                    {{ cat.category }}
+                </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-secondary btn-sm">
+                <i class="fa-solid fa-filter"></i> Filter
+            </button>
+        </form>
+    </div>
+
+    <!-- Products Responsive Grid -->
+    {% if products|length == 0 %}
+        <div class="card" style="text-align: center; padding: 50px 20px;">
+            <i class="fa-solid fa-box-open" style="font-size: 3rem; color: var(--text-light); margin-bottom: 15px;"></i>
+            <h3>No Products Found</h3>
+            <p style="color: var(--text-muted);">We couldn't find any products matching your current search/filter criteria.</p>
+            <a href="/user/products" class="btn btn-primary btn-sm" style="margin-top: 20px;">Reset Filters</a>
+        </div>
+    {% else %}
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-item-card">
+                <div class="product-image-container">
+                    <span class="product-badge">{{ product.category }}</span>
+                    {% if product.image %}
+                        <img src="/static/uploads/product_images/{{ product.image }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div style="font-size: 3rem; color: var(--text-light);"><i class="fa-solid fa-image"></i></div>
+                    {% endif %}
+                </div>
+                
+                <div class="product-info">
+                    <span class="product-cat">{{ product.category }}</span>
+                    <h3 class="product-name-title">{{ product.name }}</h3>
+                    <div class="product-price-tag">₹{{ product.price }}</div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: auto;">
+                        <a href="/user/product/{{ product.product_id }}" class="btn btn-light btn-sm" style="flex: 1;">
+                            <i class="fa-solid fa-circle-info"></i> Details
+                        </a>
+                        <a href="/user/add-to-cart/{{ product.product_id }}" class="btn btn-primary btn-sm add-to-cart-ajax" style="flex: 1.2;">
+                            <i class="fa-solid fa-cart-plus"></i> Add
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.add-to-cart-ajax').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const url = this.getAttribute('href');
+        
+        // Show loading spinner
+        const originalContent = this.innerHTML;
+        this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
+        this.style.pointerEvents = 'none'; // prevent double clicks
+        
+        fetch(url + '?ajax=1', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw new Error(err.message || 'Error') });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                // Update badge in navbar
+                let badge = document.querySelector('.cart-badge');
+                if (badge) {
+                    badge.innerText = data.cart_count;
+                } else {
+                    const cartLink = document.querySelector('.cart-nav-link');
+                    if (cartLink) {
+                        const newBadge = document.createElement('span');
+                        newBadge.className = 'cart-badge';
+                        newBadge.innerText = data.cart_count;
+                        cartLink.appendChild(newBadge);
+                    }
+                }
+                
+                // Show success feedback
+                this.innerHTML = '<i class="fa-solid fa-check"></i> Added!';
+                this.style.background = 'linear-gradient(135deg, var(--success) 0%, #059669 100%)';
+                this.style.borderColor = 'var(--success)';
+                
+                setTimeout(() => {
+                    this.innerHTML = originalContent;
+                    this.style.background = '';
+                    this.style.borderColor = '';
+                    this.style.pointerEvents = 'auto';
+                }, 1500);
+            } else {
+                alert(data.message || 'Error adding product.');
+                this.innerHTML = originalContent;
+                this.style.pointerEvents = 'auto';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            if (error.message.includes('login') || error.message.includes('first') || error.message.includes('401')) {
+                window.location.href = '/user-login';
+            } else {
+                alert('Something went wrong. Please try again.');
+                this.innerHTML = originalContent;
+                this.style.pointerEvents = 'auto';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

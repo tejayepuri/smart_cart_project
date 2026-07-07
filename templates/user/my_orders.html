@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCart - My Orders{% endblock %}
+
+{% block content %}
+<div class="container fade-in" style="max-width: 900px;">
+    <h2 style="margin-bottom: 25px;"><i class="fa-solid fa-clipboard-list" style="color: var(--primary); margin-right: 8px;"></i> My Purchase History</h2>
+
+    {% if orders|length == 0 %}
+        <div class="card" style="text-align: center; padding: 50px 20px;">
+            <i class="fa-solid fa-box-open" style="font-size: 3.5rem; color: var(--text-light); margin-bottom: 20px;"></i>
+            <h3>No Orders Yet</h3>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">You have not placed any orders yet. Add some items to your cart to begin!</p>
+            <a href="/user/products" class="btn btn-primary"><i class="fa-solid fa-store"></i> Start Shopping</a>
+        </div>
+    {% else %}
+        <div class="order-list-grid">
+            {% for order in orders %}
+            <div class="order-history-card card">
+                <!-- Status Badge -->
+                <span class="order-status-badge">{{ order.payment_status }}</span>
+                
+                <h3 style="margin-bottom: 15px;">Order <span style="font-family: monospace; color: var(--text-muted);">#{{ order.order_id }}</span></h3>
+                
+                <div style="display: flex; gap: 40px; flex-wrap: wrap; margin-bottom: 20px; font-size: 0.95rem;">
+                    <div>
+                        <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 4px;">Date Placed</span>
+                        <strong>{{ order.created_at }}</strong>
+                    </div>
+                    
+                    <div>
+                        <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 4px;">Total Price</span>
+                        <strong style="color: var(--primary); font-size: 1.1rem;">₹{{ order.amount }}</strong>
+                    </div>
+                    
+                    <div>
+                        <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 4px;">Payment Method</span>
+                        <strong>Razorpay Secure Checkout</strong>
+                    </div>
+                </div>
+                
+                <hr style="border: 0; border-top: 1px dashed var(--border-color); margin-bottom: 20px;">
+                
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <a href="/user/order-success/{{ order.order_id }}" class="btn btn-primary btn-sm">
+                        <i class="fa-solid fa-circle-info"></i> View Details & Summary
+                    </a>
+                    
+                    <a href="/user/download-invoice/{{ order.order_id }}" class="btn btn-outline btn-sm">
+                        <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> Get Invoice (PDF)
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}SmartCart - View Product Detail{% endblock %}
+
+{% block content %}
+<div class="container fade-in">
+    <div style="margin-bottom: 25px;">
+        <a href="/admin/item-list" style="font-weight: 500;"><i class="fa-solid fa-arrow-left"></i> Back to Product List</a>
+    </div>
+
+    <div class="card">
+        <div class="product-detail-flex">
+            <!-- Product Gallery Image -->
+            <div class="product-detail-gallery">
+                {% if product.image %}
+                    <img src="/static/uploads/product_images/{{ product.image }}" alt="{{ product.name }}">
+                {% else %}
+                    <div style="font-size: 5rem; color: var(--text-light);"><i class="fa-solid fa-image"></i></div>
+                {% endif %}
+            </div>
+
+            <!-- Product Specs Content -->
+            <div class="product-detail-content">
+                <span class="detail-label" style="background-color: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 20px;">{{ product.category }}</span>
+                <h1 style="margin: 15px 0 20px; font-size: 2.2rem;">{{ product.name }}</h1>
+                
+                <div class="detail-price">₹{{ product.price }}</div>
+                
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 20px;">
+                
+                <h4 style="margin-bottom: 10px;">Description</h4>
+                <p class="detail-desc">{{ product.description }}</p>
+                
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <a href="/admin/update-item/{{ product.product_id }}" class="btn btn-secondary">
+                        <i class="fa-solid fa-pen-to-square"></i> Update This Product
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
