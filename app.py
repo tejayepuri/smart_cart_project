@@ -32,12 +32,16 @@ mail = Mail(app)
 
 # ---------------- DB CONNECTION FUNCTION --------------
 def get_db_connection():
-    return mysql.connector.connect(
-        host=config.DB_HOST,
-        user=config.DB_USER,
-        password=config.DB_PASSWORD,
-        database=config.DB_NAME
-    )
+    kwargs = {
+        "host": config.DB_HOST,
+        "port": config.DB_PORT,
+        "user": config.DB_USER,
+        "password": config.DB_PASSWORD,
+        "database": config.DB_NAME
+    }
+    if config.DB_SSL_MODE:
+        kwargs["ssl_mode"] = config.DB_SSL_MODE
+    return mysql.connector.connect(**kwargs)
 
 def initialize_database():
     """Create required tables and missing columns if they do not already exist."""

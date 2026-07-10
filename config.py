@@ -18,9 +18,11 @@ SECRET_KEY = os.getenv("SECRET_KEY", "your_secret_key")
 
 # MySQL Database
 DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = int(os.getenv("DB_PORT", 3306))
 DB_USER = os.getenv("DB_USER", "root")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "Teja@1610")
 DB_NAME = os.getenv("DB_NAME", "smartcart_db")
+DB_SSL_MODE = os.getenv("DB_SSL_MODE", "PREFERRED")
 
 # Email SMTP Settings
 MAIL_SERVER = os.getenv("MAIL_SERVER", "smtp.gmail.com")

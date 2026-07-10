@@ -9,12 +9,16 @@ services:
         generateValue: true
       - key: DB_HOST
         sync: false
+      - key: DB_PORT
+        value: "22818"
       - key: DB_USER
         sync: false
       - key: DB_PASSWORD
         sync: false
       - key: DB_NAME
         sync: false
+      - key: DB_SSL_MODE
+        value: "REQUIRED"
       - key: MAIL_SERVER
         value: smtp.gmail.com
       - key: MAIL_PORT
