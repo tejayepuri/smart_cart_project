@@ -39,8 +39,8 @@ def get_db_connection():
         "password": config.DB_PASSWORD,
         "database": config.DB_NAME
     }
-    if config.DB_SSL_MODE:
-        kwargs["ssl_mode"] = config.DB_SSL_MODE
+    # mysql-connector-python negotiates SSL automatically by default (ssl_disabled=False),
+    # so we do not need to pass an external 'ssl_mode' parameter.
     return mysql.connector.connect(**kwargs)
 
 def initialize_database():
