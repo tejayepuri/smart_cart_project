@@ -9,23 +9,26 @@
 # Stores all configuration settings
 # ------------------------------------------
 import os
-SECRET_KEY = "your_secret_key"
+from dotenv import load_dotenv
+
+# Load environment variables from .env file for local development
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY", "your_secret_key")
 
 # MySQL Database
-
-
-# MySQL Database
-DB_HOST = os.environ.get('DB_HOST')
+DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_USER = os.getenv("DB_USER", "root")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "Teja@1610")
 DB_NAME = os.getenv("DB_NAME", "smartcart_db")
-# Email SMTP Settings
-MAIL_SERVER = 'smtp.gmail.com'
-MAIL_PORT = 587
-MAIL_USE_TLS = True
-MAIL_USERNAME = 'tejayepuri350@gmail.com'
-MAIL_PASSWORD = 'hufyduedziggcvke'   # Gmail App Password
 
-RAZORPAY_KEY_ID = "rzp_test_T8hXeb5Ihbm9l8"
-RAZORPAY_KEY_SECRET = "ozU09rsClILVMcLfJ1xmNGj5"
+# Email SMTP Settings
+MAIL_SERVER = os.getenv("MAIL_SERVER", "smtp.gmail.com")
+MAIL_PORT = int(os.getenv("MAIL_PORT", 587))
+MAIL_USE_TLS = os.getenv("MAIL_USE_TLS", "True").lower() in ("true", "1", "yes")
+MAIL_USERNAME = os.getenv("MAIL_USERNAME", "tejayepuri350@gmail.com")
+MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", "hufyduedziggcvke")   # Gmail App Password
+
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "rzp_test_T8hXeb5Ihbm9l8")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "ozU09rsClILVMcLfJ1xmNGj5")
 

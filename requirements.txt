@@ -5,3 +5,4 @@ mysql-connector-python
 bcrypt
 razorpay
 xhtml2pdf
+python-dotenv

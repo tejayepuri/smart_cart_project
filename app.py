@@ -72,6 +72,29 @@ def initialize_database():
         )
     """)
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS orders (
+            order_id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            razorpay_order_id VARCHAR(255),
+            razorpay_payment_id VARCHAR(255),
+            amount DECIMAL(10,2),
+            payment_status VARCHAR(50),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS order_items (
+            order_item_id INT AUTO_INCREMENT PRIMARY KEY,
+            order_id INT NOT NULL,
+            product_id INT NOT NULL,
+            product_name VARCHAR(255) NOT NULL,
+            quantity INT NOT NULL,
+            price DECIMAL(10,2) NOT NULL
+        )
+    """)
+
     def ensure_column(table_name, column_name, column_definition):
         cursor.execute(
             """
