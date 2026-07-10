@@ -3,3 +3,4 @@ gunicorn
 Flask-Mail
 mysql-connector-python
 bcrypt
+razorpay
