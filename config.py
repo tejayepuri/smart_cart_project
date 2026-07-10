@@ -15,6 +15,7 @@ SECRET_KEY = "your_secret_key"
 
 
 # MySQL Database
+DB_HOST = os.environ.get('DB_HOST')
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_USER = os.getenv("DB_USER", "root")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "Teja@1610")
